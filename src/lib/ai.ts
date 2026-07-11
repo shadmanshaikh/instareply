@@ -1,6 +1,7 @@
 import { generateText } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { prisma } from './db';
+import { Message } from '@prisma/client';
 
 // Configure OpenRouter as an OpenAI-compatible provider
 const openrouter = createOpenAI({
@@ -35,7 +36,7 @@ export async function generateAIReply({ conversationId, userMessage }: GenerateR
   });
 
   // Reverse to chronological order
-  const messages = history.reverse().map((msg) => ({
+  const messages = history.reverse().map((msg: Message) => ({
     role: msg.isFromBot ? ('assistant' as const) : ('user' as const),
     content: msg.text,
   }));

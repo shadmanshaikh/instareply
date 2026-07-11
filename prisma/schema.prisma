@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Conversation {
+  id               String    @id @default(uuid())
+  participantId    String    @unique   // Instagram-scoped user ID (IGSID)
+  participantName  String?             // Cached display name (if available)
+  isAutoReplyOn    Boolean   @default(true)
+  messages         Message[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([participantId])
+}
+
+model Message {
+  id               String       @id @default(uuid())
+  igMessageId      String       @unique   // Instagram message ID (for dedup)
+  conversationId   String
+  conversation     Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId         String                 // Who sent it (user IGSID or "bot")
+  text             String
+  isFromBot        Boolean      @default(false)
+  timestamp        DateTime
+  createdAt        DateTime     @default(now())
+
+  @@index([conversationId, timestamp])
+}
+
+model BotSettings {
+  id               String   @id @default("default")
+  systemPrompt     String   @default("You are a helpful assistant responding to Instagram DMs. Be friendly, concise, and helpful.")
+  isGloballyActive Boolean  @default(true)
+  maxHistoryLength Int      @default(15)   // Number of past messages to include as context
+  model            String   @default("google/gemini-2.0-flash-001")
+  updatedAt        DateTime @updatedAt
+}

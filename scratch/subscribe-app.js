@@ -8,7 +8,7 @@ if (!ACCESS_TOKEN || ACCESS_TOKEN === 'your_page_access_token') {
   process.exit(1);
 }
 
-const GRAPH_API_BASE = 'https://graph.facebook.com/v21.0';
+const GRAPH_API_BASE = 'https://graph.instagram.com/v25.0';
 
 async function subscribeApp() {
   try {

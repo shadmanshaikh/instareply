@@ -24,9 +24,16 @@ export async function POST(req: Request) {
     const rawBody = await req.text();
     const signature = req.headers.get('x-hub-signature-256') || '';
 
+    console.log('📩 Webhook POST received');
+    console.log('Signature present:', !!signature);
+    console.log('META_APP_SECRET loaded:', !!process.env.META_APP_SECRET);
+    console.log('META_APP_SECRET length:', process.env.META_APP_SECRET?.length || 0);
+    console.log('Raw body length:', rawBody.length);
+
     // Verify signature
     if (!verifySignature(rawBody, signature)) {
       console.warn('❌ Webhook POST failed: Invalid signature');
+      console.warn('Received signature:', signature.substring(0, 20) + '...');
       return new NextResponse('Invalid signature', { status: 401 });
     }
 

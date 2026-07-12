@@ -40,19 +40,35 @@ export async function POST(req: Request) {
 
     const body = JSON.parse(rawBody);
 
+    // Log the full payload to debug structure
+    console.log('📦 Webhook payload:', JSON.stringify(body, null, 2));
+    console.log('Object type:', body.object);
+
     if (body.object === 'instagram') {
-      // Process events in the background to respond quickly to Meta
-      body.entry?.forEach((entry: any) => {
-        entry.messaging?.forEach((event: any) => {
-          processIncomingMessage(event).catch((err) => {
-            console.error('Error processing event:', err);
-          });
-        });
-      });
+      const entries = body.entry || [];
+      console.log('Number of entries:', entries.length);
+
+      for (const entry of entries) {
+        console.log('Entry ID:', entry.id);
+        console.log('Entry keys:', Object.keys(entry).join(', '));
+        const messagingEvents = entry.messaging || [];
+        console.log('Number of messaging events:', messagingEvents.length);
+
+        for (const event of messagingEvents) {
+          console.log('Processing event:', JSON.stringify(event));
+          try {
+            await processIncomingMessage(event);
+            console.log('✅ Event processed successfully');
+          } catch (err) {
+            console.error('❌ Error processing event:', err);
+          }
+        }
+      }
 
       return new NextResponse('EVENT_RECEIVED', { status: 200 });
     }
 
+    console.warn('⚠️ Unknown object type, returning 404:', body.object);
     return new NextResponse('Not Found', { status: 404 });
   } catch (error) {
     console.error('Error in webhook POST handler:', error);

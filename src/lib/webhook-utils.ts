@@ -75,7 +75,7 @@ export async function processIncomingMessage(event: MessagingEvent) {
           systemPrompt: 'You are a helpful assistant responding to Instagram DMs. Be friendly, concise, and helpful.',
           isGloballyActive: true,
           maxHistoryLength: 15,
-          model: 'google/gemini-2.0-flash-001',
+          model: 'google/gemini-2.5-flash',
         },
       });
     }

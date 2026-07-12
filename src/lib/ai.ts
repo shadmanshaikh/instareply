@@ -26,7 +26,7 @@ export async function generateAIReply({ conversationId, userMessage }: GenerateR
 
   const systemPrompt = settings?.systemPrompt || 'You are a helpful assistant responding to Instagram DMs. Be friendly, concise, and helpful.';
   const maxHistory = settings?.maxHistoryLength || 15;
-  const modelId = settings?.model || 'google/gemini-2.0-flash-001';
+  const modelId = settings?.model || 'google/gemini-2.5-flash';
 
   // 2. Fetch conversation history for context
   const history = await prisma.message.findMany({

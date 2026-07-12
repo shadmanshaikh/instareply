@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     console.log('📦 Webhook payload:', JSON.stringify(body, null, 2));
     console.log('Object type:', body.object);
 
-    if (body.object === 'instagram') {
+    if (body.object === 'instagram' || body.object === 'page') {
       const entries = body.entry || [];
       console.log('Number of entries:', entries.length);
 

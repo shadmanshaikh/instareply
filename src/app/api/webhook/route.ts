@@ -51,8 +51,21 @@ export async function POST(req: Request) {
       for (const entry of entries) {
         console.log('Entry ID:', entry.id);
         console.log('Entry keys:', Object.keys(entry).join(', '));
-        const messagingEvents = entry.messaging || [];
-        console.log('Number of messaging events:', messagingEvents.length);
+        
+        // Combine events from both standard messaging arrays and test changes arrays
+        const messagingEvents: any[] = [];
+        if (entry.messaging) {
+          messagingEvents.push(...entry.messaging);
+        }
+        if (entry.changes) {
+          entry.changes.forEach((change: any) => {
+            if (change.field === 'messages' && change.value) {
+              messagingEvents.push(change.value);
+            }
+          });
+        }
+
+        console.log('Number of messaging events found:', messagingEvents.length);
 
         for (const event of messagingEvents) {
           console.log('Processing event:', JSON.stringify(event));

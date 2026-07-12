@@ -52,7 +52,14 @@ export async function processIncomingMessage(event: MessagingEvent) {
         senderId,
         text: messageText,
         isFromBot: false,
-        timestamp: new Date(event.timestamp),
+        timestamp: (() => {
+          if (!event.timestamp) return new Date();
+          const ts = typeof event.timestamp === 'string' ? parseInt(event.timestamp, 10) : event.timestamp;
+          // If it's a 10-digit Unix timestamp (seconds), multiply by 1000 to get milliseconds
+          const timestampMs = ts < 9999999999 ? ts * 1000 : ts;
+          const parsedDate = new Date(timestampMs);
+          return isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+        })(),
       },
     });
 
